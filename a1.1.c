@@ -59,20 +59,21 @@ int split_on_pivot(struct block my_data)
 }
 
 /* Quick sort the data. */
-void quick_sort(struct block my_data)
+void* quick_sort(void *value)
 {
-    if (my_data.size < 2)
-        return;
-    int pivot_pos = split_on_pivot(my_data);
+    struct block *my_data = value;
+    if ((*my_data).size < 2)
+        return value;
+    int pivot_pos = split_on_pivot((*my_data));
 
     struct block left_side, right_side;
 
     left_side.size = pivot_pos;
-    left_side.data = my_data.data;
-    right_side.size = my_data.size - pivot_pos - 1;
-    right_side.data = my_data.data + pivot_pos + 1;
-    quick_sort(left_side);
-    quick_sort(right_side);
+    left_side.data = (*my_data).data;
+    right_side.size = (*my_data).size - pivot_pos - 1;
+    right_side.data = (*my_data).data + pivot_pos + 1;
+    quick_sort((void *)&left_side);
+    quick_sort((void *)&right_side);
 }
 
 /* Check to see if the data is sorted. */
@@ -86,11 +87,7 @@ bool is_sorted(struct block my_data)
     }
     return sorted;
 }
-void *pass_on(void *data)
-{
-    struct block *block = data;
-    quick_sort(*block);
-}
+
 /* Fill the array with random data. */
 void produce_random_data(struct block my_data)
 {
@@ -101,7 +98,7 @@ void produce_random_data(struct block my_data)
     }
 }
 
-int main(int argc, char *argv[])
+void main(int argc, char *argv[])
 {
     long size;
 
@@ -156,8 +153,8 @@ int main(int argc, char *argv[])
     pthread_join(ptid, NULL);
     printf(",,\n");*/
     pthread_t ptid;
-    pthread_create(&ptid, NULL, &pass_on, (void *)&right_side);
-    quick_sort(left_side);
+    pthread_create(&ptid, NULL, &quick_sort, (void *)&right_side);
+    quick_sort((void *)&left_side);
     pthread_join(ptid, NULL);
 
     times(&finish_times);

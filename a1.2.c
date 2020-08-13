@@ -59,13 +59,23 @@ int split_on_pivot(struct block my_data)
 }
 
 /* Quick sort the data. */
-void* quick_sort(void *value)
+void *quick_sort(void *value)
 {
+
+    int rc;
+    size_t s1;
+    s1 = 4096;
+    pthread_attr_t attr;
+    rc = pthread_attr_init(&attr);
+    rc = pthread_attr_setstacksize(&attr, s1);
+    pthread_t ptid[2];
+    int e = 0;
+
     struct block *my_data = value;
 
     //printf("\n\n\n %d \n\n\n\n", (*my_data).size);
     if ((*my_data).size < 2)
-        return;
+        return value;
     int pivot_pos = split_on_pivot(*my_data);
 
     struct block left_side, right_side;
@@ -74,26 +84,46 @@ void* quick_sort(void *value)
     left_side.data = (*my_data).data;
     right_side.size = (*my_data).size - pivot_pos - 1;
     right_side.data = (*my_data).data + pivot_pos + 1;
-
-
-    pthread_t ptid[2];
-
-    //quick_sort((void *)&right_side);
-    //quick_sort((void *)&left_side);
-    if (pthread_create(&ptid[0], NULL, &quick_sort, (void *)&left_side))
+    int a[2];
+    e = pthread_create(&ptid[0], &attr, &quick_sort, (void *)&left_side);
+    if (e)
     {
-        printf("*");
+        printf("\n1,%d ", e);
         quick_sort((void *)&left_side);
+        a[0] = 0;
     }
-    else {
-        printf("&");
-    }
-    if (pthread_create(&ptid[1], NULL, &quick_sort, (void *)&right_side))
+    else
     {
-        quick_sort((void *)&right_side);
+        a[0] = 1;
     }
-    pthread_join(ptid[0], NULL);
-    pthread_join(ptid[1], NULL);
+
+    //e = pthread_create(&ptid[1], &attr, &quick_sort, (void *)&right_side);
+    e = 1;
+    if (e)
+    {
+        printf("\n2,%d ", e);
+        quick_sort((void *)&right_side);
+        a[1] = 0;
+    }
+    {
+        a[1] = 1;
+    }
+    if (a[0])
+    {
+        e = pthread_join(ptid[0], NULL);
+        if (e)
+        {
+            printf("\n3,%d ", e);
+        }
+    }
+    if (a[1])
+    {
+        e = pthread_join(ptid[1], NULL);
+        if (e)
+        {
+            printf("\n4,%d ", e);
+        }
+    }
 }
 
 /* Check to see if the data is sorted. */
