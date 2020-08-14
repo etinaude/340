@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <sys/times.h>
 #include <pthread.h>
+#include <sys/wait.h>
 
 #define SIZE 10
 
@@ -139,10 +140,25 @@ void main(int argc, char *argv[])
     right_side.size = start_block.size - pivot_pos - 1;
     right_side.data = start_block.data + pivot_pos + 1;
 
-    pthread_t ptid;
-    pthread_create(&ptid, NULL, &quick_sort, (void *)&right_side);
-    quick_sort((void *)&left_side);
-    pthread_join(ptid, NULL);
+    int a[0];
+    printf("c%d\n", pipe(a));
+
+    if (fork() == 0)
+    {
+        quick_sort((void *)&left_side);
+        close(a[0]);
+        printf("a%ld\n", (write(a[1], &left_side, sizeof(left_side))));
+        close(a[1]);
+        printf("1\n\n");
+    }
+    else
+    {
+        quick_sort((void *)&right_side);
+        wait(NULL);
+        close(a[1]);
+        printf("b%ld\n", (read(a[0], &left_side, sizeof(left_side))));
+        close(a[0]);
+    }
 
     times(&finish_times);
     printf("finish time in clock ticks: %ld\n", finish_times.tms_utime);
