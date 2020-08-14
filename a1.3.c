@@ -21,6 +21,9 @@
 #include <pthread.h>
 
 #define SIZE 10
+pthread_t ptid;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 struct block
 {
@@ -58,42 +61,26 @@ int split_on_pivot(struct block my_data)
     return right;
 }
 
-void *pass_on(void *data)
-{
-    struct block *block = data;
-    quick_sort(*block);
-}
 /* Quick sort the data. */
-void quick_sort(struct block my_data)
+void *quick_sort(void *value)
 {
-    if (my_data.size < 2)
-        return;
-    int pivot_pos = split_on_pivot(my_data);
+    struct block *my_data = value;
+    if ((*my_data).size < 2)
+        return value;
+    int pivot_pos = split_on_pivot((*my_data));
 
     struct block left_side, right_side;
 
     left_side.size = pivot_pos;
-    left_side.data = my_data.data;
-    right_side.size = my_data.size - pivot_pos - 1;
-    right_side.data = my_data.data + pivot_pos + 1;
+    left_side.data = (*my_data).data;
+    right_side.size = (*my_data).size - pivot_pos - 1;
+    right_side.data = (*my_data).data + pivot_pos + 1;
 
-    /*printf("right:%d %d\n", right_side.size, *right_side.data);
-    printf("left: %d %d\n", left_side.size, *left_side.data);
-    if (pthread_create(&ptid, NULL, quick_sort, &left_side))
-    {
-        fprintf(stderr, "Error creating thread\n");
-    }
-    else
-    {
-        printf("..\n");
-    }
-    quick_sort(right_side);
-    pthread_join(ptid, NULL);
-    printf(",,\n");*/
-    pthread_t ptid;
-    pthread_create(&ptid, NULL, &pass_on, (void *)&right_side);
-    quick_sort(left_side);
-    pthread_join(ptid, NULL);
+    //pthread_create(&ptid, NULL, &quick_sort, (void *)&left_side);
+    quick_sort((void *)&left_side);
+    quick_sort((void *)&right_side);
+    pthread_mutex_unlock(&lock);
+    pthread_cond_signal(&cond);
 }
 
 /* Check to see if the data is sorted. */
@@ -118,7 +105,7 @@ void produce_random_data(struct block my_data)
     }
 }
 
-int main(int argc, char *argv[])
+void main(int argc, char *argv[])
 {
     long size;
 
@@ -147,7 +134,25 @@ int main(int argc, char *argv[])
     struct tms start_times, finish_times;
     times(&start_times);
     printf("start time in clock ticks: %ld\n", start_times.tms_utime);
-    quick_sort(start_block);
+
+    if (start_block.size < 2)
+        return;
+    int pivot_pos = split_on_pivot(start_block);
+
+    struct block left_side, right_side;
+
+    left_side.size = pivot_pos;
+    left_side.data = start_block.data;
+    right_side.size = start_block.size - pivot_pos - 1;
+    right_side.data = start_block.data + pivot_pos + 1;
+
+    pthread_mutex_lock(&lock);
+    pthread_cond_signal(&cond);
+    pthread_create(&ptid, NULL, &quick_sort, (void *)&left_side);
+    pthread_cond_wait(&cond, &lock);
+    quick_sort((void *)&right_side);
+    pthread_join(ptid, NULL);
+
     times(&finish_times);
     printf("finish time in clock ticks: %ld\n", finish_times.tms_utime);
 

@@ -100,7 +100,7 @@ void *quick_sort(void *value)
         e = pthread_join(ptid, NULL);
         if (e)
         {
-            printf("\n3,%d ", e);
+            //printf("\n3,%d ", e);
         }
     }
 }
