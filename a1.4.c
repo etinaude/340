@@ -141,13 +141,14 @@ void main(int argc, char *argv[])
     right_side.data = start_block.data + pivot_pos + 1;
 
     int a[0];
-    printf("c%d\n", pipe(a));
+    int result;
+    result = pipe(a);
 
     if (fork() == 0)
     {
         quick_sort((void *)&left_side);
         close(a[0]);
-        printf("a%ld\n", (write(a[1], &left_side, sizeof(left_side))));
+        result = write(a[1], left_side.data, sizeof(int) * left_side.size);
         close(a[1]);
         printf("1\n\n");
     }
@@ -156,7 +157,7 @@ void main(int argc, char *argv[])
         quick_sort((void *)&right_side);
         wait(NULL);
         close(a[1]);
-        printf("b%ld\n", (read(a[0], &left_side, sizeof(left_side))));
+        result = read(a[0], left_side.data, sizeof(int) * left_side.size);
         close(a[0]);
     }
 
