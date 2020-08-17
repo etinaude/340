@@ -140,8 +140,8 @@ void main(int argc, char *argv[])
     right_side.data = start_block.data + pivot_pos + 1;
 
     pthread_t ptid;
-    pthread_create(&ptid, NULL, &quick_sort, (void *)&right_side);
-    quick_sort((void *)&left_side);
+    pthread_create(&ptid, NULL, &quick_sort, (void *)&left_side);
+    quick_sort((void *)&right_side);
     pthread_join(ptid, NULL);
 
     times(&finish_times);
