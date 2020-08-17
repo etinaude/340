@@ -148,15 +148,16 @@ void main(int argc, char *argv[])
     {
         quick_sort((void *)&left_side);
         close(a[0]);
+        printf("1\n\n");
         result = write(a[1], left_side.data, sizeof(int) * left_side.size);
         close(a[1]);
-        printf("1\n\n");
+        exit(0);
     }
     else
     {
         quick_sort((void *)&right_side);
-        wait(NULL);
         close(a[1]);
+        //wait(NULL);
         result = read(a[0], left_side.data, sizeof(int) * left_side.size);
         close(a[0]);
     }
