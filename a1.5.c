@@ -70,35 +70,26 @@ void quick_sort(struct block my_data)
     left_side.data = my_data.data;
     right_side.size = my_data.size - pivot_pos - 1;
     right_side.data = my_data.data + pivot_pos + 1;
-    if (my_data.size < 65534 && my_data.size > 60000)
+    if (my_data.size > 10000000)
     {
+        int result;
         int a[2];
-        int result = pipe(a);
-        int forks = fork();
-        if (forks == 0)
+        if (fork() == 0)
         {
-            int pid = getppid();
             quick_sort(left_side);
             close(a[0]);
-            //result = write(a[1], &pid, sizeof(pid));
-            result = write(a[1], left_side.data, left_side.size);
+            printf("1\n\n");
+            result = write(a[1], left_side.data, sizeof(int) * left_side.size);
             close(a[1]);
-            printf("kid: %d\n", result);
             exit(0);
         }
         else
         {
-            int temp = 0;
             quick_sort(right_side);
             close(a[1]);
             //wait(NULL);
-            printf(",,,%d\n", left_side.data);
-            result = read(a[0], left_side, left_side.size);
-            //result = read(a[0], &temp, sizeof(int));
-            printf("...%d\n", left_side.data);
-            //printf("pp:%d \tp:%d\t p2:%d\n", getppid(), temp, getpid());
+            result = read(a[0], left_side.data, sizeof(int) * left_side.size);
             close(a[0]);
-            printf("adult: %d\n", result);
         }
     }
     else
