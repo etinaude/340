@@ -58,34 +58,39 @@ int split_on_pivot(struct block my_data)
 }
 
 /* Quick sort the data. */
-void quick_sort(struct block my_data)
+void *quick_sort(void *value)
 {
-    if (my_data.size < 2)
-        return;
-    int pivot_pos = split_on_pivot(my_data);
+    struct block *my_data = value;
+    if ((*my_data).size < 2)
+        return value;
+    int pivot_pos = split_on_pivot((*my_data));
 
     struct block left_side, right_side;
 
     left_side.size = pivot_pos;
-    left_side.data = my_data.data;
-    right_side.size = my_data.size - pivot_pos - 1;
-    right_side.data = my_data.data + pivot_pos + 1;
-    if (my_data.size > 8000000)
+    left_side.data = (*my_data).data;
+    right_side.size = (*my_data).size - pivot_pos - 1;
+    right_side.data = (*my_data).data + pivot_pos + 1;
+    if ((*my_data).size > 8000000)
     {
         int result;
         int a[2];
-        if (fork() == 0)
+        int off;
+        result = pipe(a);
+        int forks = fork();
+        if (forks == 0)
         {
-            quick_sort(left_side);
+            quick_sort((void *)&left_side);
             close(a[0]);
 
             result = write(a[1], left_side.data, left_side.size * sizeof(int));
+            printf("w:%d\n", (result));
             close(a[1]);
             exit(0);
         }
         else
         {
-            quick_sort(&right_side);
+            quick_sort((void *)&right_side);
             //wait(NULL);
             close(a[1]);
             int sum = 0;
@@ -105,8 +110,8 @@ void quick_sort(struct block my_data)
     else
     {
         //printf("3\n");
-        quick_sort(left_side);
-        quick_sort(right_side);
+        quick_sort((void *)&left_side);
+        quick_sort((void *)&right_side);
     }
 }
 
@@ -161,7 +166,7 @@ int main(int argc, char *argv[])
     struct tms start_times, finish_times;
     times(&start_times);
     printf("start time in clock ticks: %ld\n", start_times.tms_utime);
-    quick_sort(start_block);
+    quick_sort((void *)&start_block);
     times(&finish_times);
     printf("finish time in clock ticks: %ld\n", finish_times.tms_utime);
 

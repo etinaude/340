@@ -145,7 +145,6 @@ void main(int argc, char *argv[])
     result = pipe(a);
     int temp[164];
     long off = 0;
-
     if (fork() == 0)
     {
         quick_sort((void *)&left_side);
@@ -166,8 +165,7 @@ void main(int argc, char *argv[])
             //wait(NULL);
             result = read(a[0], left_side.data + off / 4, 65000);
             off += 65000;
-            sum += result;
-            printf("r:%d\n", (result));
+            printf("%d\n", (result));
         }
         //printf("sum:%d\n", (sum) / sizeof(int));
         close(a[0]);
