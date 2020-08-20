@@ -7,8 +7,6 @@
 
     By submitting a program you are claiming that you and only you have made
     adjustments and additions to this code.
-
-    clear;cc   -O2   a1.1.c -o   1 -pthread;time ./1 10
  */
 
 #include <stdio.h>
@@ -18,9 +16,7 @@
 #include <sys/resource.h>
 #include <stdbool.h>
 #include <sys/times.h>
-#include <pthread.h>
 #include <sys/wait.h>
-#include <fcntl.h>
 
 #define SIZE 10
 
@@ -43,6 +39,7 @@ int split_on_pivot(struct block my_data)
     int right = my_data.size - 1;
     int left = 0;
     int pivot = my_data.data[right];
+    //printf("Pivot %d \n", pivot);
     while (left < right)
     {
         int value = my_data.data[right - 1];
@@ -61,21 +58,55 @@ int split_on_pivot(struct block my_data)
 }
 
 /* Quick sort the data. */
-void *quick_sort(void *value)
+void quick_sort(struct block my_data)
 {
-    struct block *my_data = value;
-    if ((*my_data).size < 2)
-        return value;
-    int pivot_pos = split_on_pivot((*my_data));
+    if (my_data.size < 2)
+        return;
+    int pivot_pos = split_on_pivot(my_data);
 
     struct block left_side, right_side;
 
     left_side.size = pivot_pos;
-    left_side.data = (*my_data).data;
-    right_side.size = (*my_data).size - pivot_pos - 1;
-    right_side.data = (*my_data).data + pivot_pos + 1;
-    quick_sort((void *)&left_side);
-    quick_sort((void *)&right_side);
+    left_side.data = my_data.data;
+    right_side.size = my_data.size - pivot_pos - 1;
+    right_side.data = my_data.data + pivot_pos + 1;
+    if (my_data.size < 65534 && my_data.size > 60000)
+    {
+        int a[2];
+        int result = pipe(a);
+        int forks = fork();
+        if (forks == 0)
+        {
+            int pid = getppid();
+            quick_sort(left_side);
+            close(a[0]);
+            //result = write(a[1], &pid, sizeof(pid));
+            result = write(a[1], left_side.data, left_side.size);
+            close(a[1]);
+            printf("kid: %d\n", result);
+            exit(0);
+        }
+        else
+        {
+            int temp = 0;
+            quick_sort(right_side);
+            close(a[1]);
+            //wait(NULL);
+            printf(",,,%d\n", left_side.data);
+            result = read(a[0], left_side, left_side.size);
+            //result = read(a[0], &temp, sizeof(int));
+            printf("...%d\n", left_side.data);
+            //printf("pp:%d \tp:%d\t p2:%d\n", getppid(), temp, getpid());
+            close(a[0]);
+            printf("adult: %d\n", result);
+        }
+    }
+    else
+    {
+        //printf("3\n");
+        quick_sort(left_side);
+        quick_sort(right_side);
+    }
 }
 
 /* Check to see if the data is sorted. */
@@ -100,7 +131,7 @@ void produce_random_data(struct block my_data)
     }
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     long size;
 
@@ -129,40 +160,7 @@ void main(int argc, char *argv[])
     struct tms start_times, finish_times;
     times(&start_times);
     printf("start time in clock ticks: %ld\n", start_times.tms_utime);
-
-    if (start_block.size < 2)
-        return;
-    int pivot_pos = split_on_pivot(start_block);
-
-    struct block left_side, right_side;
-
-    left_side.size = pivot_pos;
-    left_side.data = start_block.data;
-    right_side.size = start_block.size - pivot_pos - 1;
-    right_side.data = start_block.data + pivot_pos + 1;
-
-    int a[0];
-    int result;
-    result = pipe2(a, O_NONBLOCK);
-
-    if (fork() == 0)
-    {
-        quick_sort((void *)&left_side);
-        close(a[0]);
-        printf("1\n\n");
-        result = write(a[1], left_side.data, sizeof(int) * left_side.size);
-        close(a[1]);
-        exit(0);
-    }
-    else
-    {
-        quick_sort((void *)&right_side);
-        close(a[1]);
-        //wait(NULL);
-        result = read(a[0], left_side.data, sizeof(int) * left_side.size);
-        close(a[0]);
-    }
-
+    quick_sort(start_block);
     times(&finish_times);
     printf("finish time in clock ticks: %ld\n", finish_times.tms_utime);
 
@@ -171,5 +169,6 @@ void main(int argc, char *argv[])
 
     printf(is_sorted(start_block) ? "sorted\n" : "not sorted\n");
     free(start_block.data);
+    //*/
     exit(EXIT_SUCCESS);
 }
