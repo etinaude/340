@@ -20,7 +20,6 @@
 #include <sys/times.h>
 #include <pthread.h>
 #include <sys/wait.h>
-#include <fcntl.h>
 
 #define SIZE 10
 
@@ -143,24 +142,36 @@ void main(int argc, char *argv[])
 
     int a[0];
     int result;
-    result = pipe2(a, O_NONBLOCK);
+    result = pipe(a);
+    int temp[164];
+    long off = 0;
 
     if (fork() == 0)
     {
         quick_sort((void *)&left_side);
         close(a[0]);
-        printf("1\n\n");
-        result = write(a[1], left_side.data, sizeof(int) * left_side.size);
+
+        result = write(a[1], left_side.data, left_side.size * sizeof(int));
         close(a[1]);
         exit(0);
     }
     else
     {
         quick_sort((void *)&right_side);
-        close(a[1]);
         //wait(NULL);
-        result = read(a[0], left_side.data, sizeof(int) * left_side.size);
+        close(a[1]);
+        int sum = 0;
+        while (off < left_side.size * sizeof(int))
+        {
+            //wait(NULL);
+            result = read(a[0], left_side.data + off / 4, 65000);
+            off += 65000;
+            sum += result;
+            printf("r:%d\n", (result));
+        }
+        //printf("sum:%d\n", (sum) / sizeof(int));
         close(a[0]);
+        //result = read(a[0], left_side.data, sizeof(int) * left_side.size);
     }
 
     times(&finish_times);

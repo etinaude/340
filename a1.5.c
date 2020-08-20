@@ -70,7 +70,7 @@ void quick_sort(struct block my_data)
     left_side.data = my_data.data;
     right_side.size = my_data.size - pivot_pos - 1;
     right_side.data = my_data.data + pivot_pos + 1;
-    if (my_data.size > 10000000)
+    if (my_data.size > 8000000)
     {
         int result;
         int a[2];
@@ -78,18 +78,28 @@ void quick_sort(struct block my_data)
         {
             quick_sort(left_side);
             close(a[0]);
-            printf("1\n\n");
-            result = write(a[1], left_side.data, sizeof(int) * left_side.size);
+
+            result = write(a[1], left_side.data, left_side.size * sizeof(int));
             close(a[1]);
             exit(0);
         }
         else
         {
-            quick_sort(right_side);
-            close(a[1]);
+            quick_sort(&right_side);
             //wait(NULL);
-            result = read(a[0], left_side.data, sizeof(int) * left_side.size);
+            close(a[1]);
+            int sum = 0;
+            while (off < left_side.size * sizeof(int))
+            {
+                //wait(NULL);
+                result = read(a[0], left_side.data + off / 4, 65000);
+                off += 65000;
+                sum += result;
+                printf("r:%d\n", (result));
+            }
+            //printf("sum:%d\n", (sum) / sizeof(int));
             close(a[0]);
+            //result = read(a[0], left_side.data, sizeof(int) * left_side.size);
         }
     }
     else
