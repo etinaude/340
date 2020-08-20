@@ -71,7 +71,7 @@ void *quick_sort(void *value)
     left_side.data = (*my_data).data;
     right_side.size = (*my_data).size - pivot_pos - 1;
     right_side.data = (*my_data).data + pivot_pos + 1;
-    if ((*my_data).size > 8000000)
+    if ((*my_data).size > 18000)
     {
         int result;
         int a[2];
@@ -84,7 +84,7 @@ void *quick_sort(void *value)
             close(a[0]);
 
             result = write(a[1], left_side.data, left_side.size * sizeof(int));
-            printf("w:%d\n", (result));
+            //printf("w:%d\n", (result));
             close(a[1]);
             exit(0);
         }
@@ -99,7 +99,7 @@ void *quick_sort(void *value)
                 //wait(NULL);
                 result = read(a[0], left_side.data + off / 4, 65000);
                 off += 65000;
-                sum += result;
+                //sum += result;
                 printf("r:%d\n", (result));
             }
             //printf("sum:%d\n", (sum) / sizeof(int));
