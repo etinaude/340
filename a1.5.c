@@ -71,7 +71,7 @@ void *quick_sort(void *value)
     left_side.data = (*my_data).data;
     right_side.size = (*my_data).size - pivot_pos - 1;
     right_side.data = (*my_data).data + pivot_pos + 1;
-    if ((*my_data).size > 18000)
+    if ((*my_data).size > 200000)
     {
         int result;
         int a[2];
@@ -130,7 +130,7 @@ bool is_sorted(struct block my_data)
 /* Fill the array with random data. */
 void produce_random_data(struct block my_data)
 {
-    srand(1); // the same random data seed every time
+    srand(2); // the same random data seed every time
     for (int i = 0; i < my_data.size; i++)
     {
         my_data.data[i] = rand() % 1000;
