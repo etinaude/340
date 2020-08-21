@@ -71,7 +71,7 @@ void *quick_sort(void *value)
     left_side.data = (*my_data).data;
     right_side.size = (*my_data).size - pivot_pos - 1;
     right_side.data = (*my_data).data + pivot_pos + 1;
-    if ((*my_data).size > 3000000)
+    if ((*my_data).size > 90000)
     {
         int result;
         int a[2];
