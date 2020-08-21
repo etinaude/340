@@ -17,6 +17,7 @@
 #include <stdbool.h>
 #include <sys/times.h>
 #include <sys/wait.h>
+#include <sys/mman.h>
 
 #define SIZE 10
 
@@ -71,41 +72,28 @@ void *quick_sort(void *value)
     left_side.data = (*my_data).data;
     right_side.size = (*my_data).size - pivot_pos - 1;
     right_side.data = (*my_data).data + pivot_pos + 1;
-    if ((*my_data).size > 3000000)
+    if ((*my_data).size > 100)
     {
         int result;
-        int a[2];
-        int off;
-        result = pipe(a);
+        int protection = PROT_READ | PROT_WRITE;
+        int visibility = MAP_SHARED | MAP_ANONYMOUS;
+        void *meme = mmap(NULL, left_side.size * sizeof(int), protection, visibility, -1, 0);
+        //memcpy(meme, left_side.data, left_side.size * sizeof(int));
         int forks = fork();
         if (forks == 0)
         {
             quick_sort((void *)&left_side);
-            close(a[0]);
-
-            result = write(a[1], left_side.data, left_side.size * sizeof(int));
-            //printf("w:%d\n", (result));
-            close(a[1]);
+            memcpy(meme, left_side.data, left_side.size * sizeof(int));
             exit(0);
         }
         else
         {
+            //printf("read0: %p\n", meme);
             quick_sort((void *)&right_side);
-            //wait(NULL);
-            close(a[1]);
-            int sum = 0;
-            while (off < left_side.size * sizeof(int))
-            {
-                //wait(NULL);
-                result = read(a[0], left_side.data + off / 4, 65000);
-                off += 65000;
-                //sum += result;
-                printf("r:%d\n", (result));
-            }
-            //printf("sum:%d\n", (sum) / sizeof(int));
-            close(a[0]);
-            //result = read(a[0], left_side.data, sizeof(int) * left_side.size);
+            wait(NULL);
+            memcpy(left_side.data, meme, left_side.size * sizeof(int));
         }
+        munmap(meme, left_side.size * sizeof(int));
     }
     else
     {
