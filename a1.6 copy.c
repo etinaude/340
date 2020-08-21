@@ -61,48 +61,54 @@ int split_on_pivot(struct block my_data)
 /* Quick sort the data. */
 void *quick_sort(void *value)
 {
+    int protection = PROT_READ | PROT_WRITE;
+    int visibility = MAP_SHARED | MAP_ANONYMOUS;
     struct block *my_data = value;
     if ((*my_data).size < 2)
         return value;
     int pivot_pos = split_on_pivot((*my_data));
 
     struct block left_side, right_side;
-
+    left_side.data = mmap(NULL, left_side.size * sizeof(int), protection, visibility, -1, 0);
+    int *delay = mmap(NULL, 4, protection, visibility, -1, 0);
+    *delay = 0;
     left_side.size = pivot_pos;
     left_side.data = (*my_data).data;
+    //printf("data %d\n", *left_side.data);
     right_side.size = (*my_data).size - pivot_pos - 1;
     right_side.data = (*my_data).data + pivot_pos + 1;
-    if (left_side.size > 10000000)
+    if (left_side.size > 4)
     {
         int result;
         int *yo;
-        int protection = PROT_READ | PROT_WRITE;
-        int visibility = MAP_SHARED | MAP_ANONYMOUS;
-        void *meme = mmap(NULL, left_side.size * sizeof(int), protection, visibility, -1, 0);
-        int *done = mmap(NULL, 4, protection, visibility, -1, 0);
-        *done = 0;
         //printf("%d,,%p\n", left_side.size, meme);
         int forks = fork();
         if (forks == 0)
         {
-            //int hi = 123;
+            int hi = 123;
+            printf("C0: %d\n", *left_side.data);
             quick_sort((void *)&left_side);
-            //printf("Child read: %d\n", left_side.data);
-            memcpy(meme, left_side.data, left_side.size * sizeof(int));
-            *done = 1;
-            printf("|w|m:%d| d:%d|t:%d|\n", meme, left_side.data, getpid());
+            *left_side.data = 111;
+            printf("C1: %d\n", *left_side.data);
+            *delay = 6;
             exit(0);
         }
         else
         {
+            //printf("p0: %d\n", *left_side.data);
+            //printf("%d 1delay\n", *delay);
             quick_sort((void *)&right_side);
             wait(NULL);
-            while (!*done)
+            /*while (!*delay)
             {
-                printf("%d\n", *done);
-            }
-            memcpy(left_side.data, meme, left_side.size * sizeof(int));
-            // printf("parent %d\n", left_side.data);
+                printf("%d\n", *delay);
+            }*/
+            /*for (int i = 0; i < 1000; i++)
+            {
+
+                printf("%d 2delay\n", *delay);
+            }*/
+            printf("p1 %d\n", *left_side.data);
             //sleep(50);
             //left_side.data = *meme;
             //printf("|r0|m:%p| d:%p|t:%d|\n", (&meme), &left_side.data, getpid());
@@ -126,7 +132,7 @@ void *quick_sort(void *value)
 
 */
 
-        munmap(meme, left_side.size * sizeof(int));
+        //munmap(meme, left_side.size * sizeof(int));
     }
     else
     {
