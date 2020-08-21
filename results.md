@@ -1,10 +1,11 @@
 # Results
 
-## Info
-
 - Name: Etienne Naude
 - UPI: enau831
 - ID: 768485633
+
+## System Information
+
 - Computer 1
 
   - WSL (Ubuntu 20.04 LTS)
@@ -14,33 +15,39 @@
   - CC version: 9.3.0
 
 - Computer 2
+
   - Kubuntu 20.04 LTS Native
   - 4 Threads, 4 core
   - CPU: i5-4590 (similar)
   - RAM: 8GB
   - CC version: 9.2.1
 
-## Seed 1, Computer 1 10,000,000 input size
+## Summary
 
-| Step | 1        | 2        | 3        | Average |
-| ---- | -------- | -------- | -------- | ------- |
-| 1    | 79.529s  | 79.860s  | 80.613s  |         |
-|      | 7946 t   | 7981 t   | 8053 t   |         |
-| 2    | 84.838s  | 83.398s  | 83.511s  |         |
-|      | 8803 t   | 8631 t   | 8714 t   |         |
-| 3    |          |          |          |         |
-|      |          |          |          |         |
-| 4    | 84.334s  | 84.195s  | 83.586s  |         |
-|      | 8720 t   | 8707 t   | 8612 t   |         |
-| 5    | 139.712s | 141.075s | 149.215s |         |
-|      | 13939 t  | 8092 t   | 13885t   |         |
-| 6    | 59.275s  | 56.706s  | 55.929s  |         |
-|      | 2259 t   | 2176 t   | 2218 t   |         |
-| 7    | 137.628s | 136.664s | 137.140s |         |
-|      | 13734 t  | 13654 t  | 13704 t  |         |
-| 8    |          |          |          |         |
+Unfortunately I Started compiling and running my programmes on Computer 1 with native Kubuntu but I ran into a hard drive issue and lost my partitions, but from having to move to using WSL I found the time difference and consistency was drastically different so I decided to run all my tests again on a separate Native linux computer. The results are bellow, each test used a 10,000,000 input size, the real time is listed in the first line in seconds and the clock ticks is in the seconds
 
-## Seed 1, Computer 2 10,000,000 input size
+## Seed 1, Computer 1
+
+| Step | 1         | 2         | 3         | Average |
+| ---- | --------- | --------- | --------- | ------- |
+| 1    | 79.529 s  | 79.860 s  | 80.613 s  |         |
+|      | 7946 t    | 7981 t    | 8053 t    |         |
+| 2    | 84.838 s  | 83.398 s  | 83.511 s  |         |
+|      | 8803 t    | 8631 t    | 8714 t    |         |
+| 3    | 83.768 s  | 83.378 s  | 82.077 s  |         |
+|      | 8803 t    | 8631 t    | 8714 t    |         |
+| 4    | 84.334 s  | 84.195 s  | 83.586 s  |         |
+|      | 8720 t    | 8707 t    | 8612 t    |         |
+| 5    | 139.712 s | 141.075 s | 149.215 s |         |
+|      | 13939 t   | 8092 t    | 13885t    |         |
+| 6    | 59.275 s  | 56.706 s  | 55.929 s  |         |
+|      | 2259 t    | 2176 t    | 2218 t    |         |
+| 7    | 137.628 s | 136.664 s | 137.140 s |         |
+|      | 13734 t   | 13654 t   | 13704 t   |         |
+| 8    |           |           |           |         |
+|      |           |           |           |         |
+
+## Seed 1, Computer 2
 
 | Step | 1        | 2        | 3        | Average      |
 | ---- | -------- | -------- | -------- | ------------ |
@@ -56,18 +63,20 @@
 |      | 4060 t   | 4060 t   | 4061 t   | 4060 t       |
 | 6    | 13.938 s | 14.220 s | 13.523 s | **13.894 s** |
 |      | 414 t    | 415 t    | 416 t    | 415 t        |
-| 7    | 41.962 s | 41.962 s | 41.959 s |              |
-|      | 4194 t   | 4193 t   | 4193 t   | 4193 t       |
+| 7    | 13.976 s | 14.001 s | 14.104s  | **14.027 s** |
+|      | 20 t     | 21 t     | 20 t     | 20 t         |
 | 8    |          |          |          |              |
 |      |          |          |          |              |
+
+The variation for the WSL was much higher than native linux where native linux was getting around 1 or 2 ticks range (other than the step 3 outlier), the WSL computer would get a variation upwards of 100.
+
+## Step 1
+
+This step was slow since it had no parallelization
 
 ## Step 2
 
 This is slightly quicker but not substantially so
-
-## Step 2.5
-
-I dont think this is what they wanted
 
 ## Step 3
 
