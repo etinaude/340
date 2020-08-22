@@ -165,7 +165,7 @@ void main(int argc, char *argv[])
             //wait(NULL);
             result = read(a[0], left_side.data + off / 4, 65000);
             off += 65000;
-            printf("%d\n", (result));
+            //printf("%d\n", (result));
         }
         //printf("sum:%d\n", (sum) / sizeof(int));
         close(a[0]);

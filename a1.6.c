@@ -90,7 +90,7 @@ void *quick_sort(void *value)
             //printf("Child read: %d\n", left_side.data);
             memcpy(meme, left_side.data, left_side.size * sizeof(int));
             *done = 1;
-            printf("|w|m:%d| d:%d|t:%d|\n", meme, left_side.data, getpid());
+            //printf("|w|m:%d| d:%d|t:%d|\n", meme, left_side.data, getpid());
             exit(0);
         }
         else
@@ -99,7 +99,7 @@ void *quick_sort(void *value)
             wait(NULL);
             while (!*done)
             {
-                printf("%d\n", *done);
+                printf(" ");
             }
             memcpy(left_side.data, meme, left_side.size * sizeof(int));
             // printf("parent %d\n", left_side.data);
