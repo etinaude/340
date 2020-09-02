@@ -1,0 +1,42 @@
+b
+a	c?
+d	a?
+b	b?
+d
+d
+ 	c
+a
+ 	b
+d	c?
+b
+a	c?
+b	a?
+c/b
+c
+d
+ 	a
+a?	b
+a	c
+d
+b?
+c
+N/A
+b?c?
+b
+
+2019
+
+semaphores
+	integer value which is used to signal between processes if data is being accessed,  alternitive to mutex
+exec calls
+	replaces current process with an entirly new running path eg, running a program in the terminal, this keepsthe same PID but changes the data, instructions, heap pretty much everything.
+	
+original linux threads
+micro kernals
+	very small kernals, has abilty to do multi processing, most processes are at user level
+	
+monitors
+	mutex and condition vars, give abilty to temporarily give up exclusive access to allow wait conditions to be met.\
+	monitors can also be therad safe classes, objects and modules, which wrap a mutex
+spin lock
+	while (locked)... good for waiting a short time but the thread looks busy and will use up reasources, kernals often use spins

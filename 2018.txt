@@ -1,0 +1,37 @@
+N/A
+N/A
+N/A
+N/A
+a	yep
+c
+d
+d
+c	b?
+c
+
+
+
+d
+c		b?
+c		?
+d
+c		?
+b		
+d		?
+c
+d		? (run the code)
+c
+a
+c
+
+2018
+
+real time OS
+	if processes dont finish in a specified time they fail, hard is harsher than soft
+distrobuted OS
+	networked into different computers working together, so less secure, 
+Popek and Goldberg
+paravirtualization
+	gives software an interface, relitivtly lightweight, geust oses need to be VM aware
+app virtulaization
+	isolates app and runs app as if it wernt on a VM
