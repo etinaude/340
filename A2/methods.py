@@ -5,20 +5,12 @@ def __init__(self):
         now = time()
         self.files['/'] = dict(st_mode=(S_IFDIR | 0o755), st_ctime=now,
                                st_mtime=now, st_atime=now, st_nlink=2)
-
-
-def chmod(self, path, mode):
-    self.files[path]['st_mode'] &= 0o770000
-    self.files[path]['st_mode'] |= mode
-    return 0
-
-    ~~this changes the mode of the file by using the and operation with the octal number 770000 then the or operation with the mode~
-
-def chown(self, path, uid, gid):
-    self.files[path]['st_uid'] = uid
-    self.files[path]['st_gid'] = gid
-?
-    ~~this changes the owner of a file by setting the uid and gid~
+'''.
+        Initializes the object and makes a blank dictionary to hold the files which holds a dictionary as the value while the file path as the key.
+        init also creates a dictionary named data which also uses pathname as the key but uses the files data as the value.
+        It also initializes the file descriptor to 0.
+        Lastly the init creates the root directory by adding the key "/" in files with a dictionary value and the current time for all time variables.
+'''
 
 def create(self, path, mode):
     self.files[path] = dict(st_mode=(S_IFREG | mode), st_nlink=1,
@@ -26,120 +18,48 @@ def create(self, path, mode):
                             st_atime=time())
     self.fd += 1
     return self.fd
-
-    ~~this creates a new file by adding it to the dictionary with the specific path and setting its attributes~
+'''.
+        This creates a new file by adding it to the files dictionary with the specified path for the key and sets the mode to the mode passed to the method and the current time for all the time variables.
+'''
 
 def getattr(self, path, fh=None):
     if path not in self.files:
         raise FuseOSError(ENOENT)
     return self.files[path]
-
-    ~~this returns an item from the files dictionary if it exists else it raises an error~ 
-
-def getxattr(self, path, name, position=0):
-    attrs = self.files[path].get('attrs', {})
-    try:
-        return attrs[name]
-    except KeyError:
-        return ''       # Should return ENOATTR
-?
-    ~~this returns a specific attribute of a file in the dictionary rather than all attributes~
-
-def listxattr(self, path):
-    attrs = self.files[path].get('attrs', {})
-    return attrs.keys()
-
-    ~~this returns the names of all the attributes of a file in the dictionary~
-
-def mkdir(self, path, mode):
-    self.files[path] = dict(st_mode=(S_IFDIR | mode), st_nlink=2,
-                            st_size=0, st_ctime=time(), st_mtime=time(),
-                            st_atime=time())
-    self.files['/']['st_nlink'] += 1
-
-    ~~this creates a new directory at a specific path by adding it to the dictionary~
+'''.
+    This returns an item from the files dictionary if it exists else it raises an error. (the file dictionary holds the attributes for the file)
+'''
 
 def open(self, path, flags):
     self.fd += 1
     return self.fd
-
-    ~~ ~
+'''.
+    open simply increases the unique file descriptor and returns it.
+'''
 
 def read(self, path, size, offset, fh):
     return self.data[path][offset:offset + size]
-
-    ~~this reads data from a file starting at the offset and ending at offset+length~
+'''.
+    This reads data from a file starting at the offset and ending at offset+length.
+    It does this by using the file path as a key for the data dictionary and using the offset as indices
+'''
 
 def readdir(self, path, fh):
     return ['.', '..'] + [x[1:] for x in self.files if x != '/']
-?
-    ~~this reads the contents of a directory ~
-
-def readlink(self, path):
-    return self.data[path]
-?
-    ~~returns the class stored at the path in the dictionary~
-
-def removexattr(self, path, name):
-    attrs = self.files[path].get('attrs', {})
-    try:
-        del attrs[name]
-    except KeyError:
-        pass        # Should return ENOATTR
-
-    ~~this removes and attribute from a file by deleting the attribute name from the file in the dictionary~
-
-def rename(self, old, new):
-    self.files[new] = self.files.pop(old)
-
-    ~~this renames a file by remapping the item from the dictionary to a new name and removing it from the old location~
-
-def rmdir(self, path):
-    self.files.pop(path)
-    self.files['/']['st_nlink'] -= 1
-?
-    ~~this deletes a directory by first removing it from the dictionary and the reducing the the st_nlink count by 1~
-
-def setxattr(self, path, name, value, options, position=0):
-    # Ignore options
-    attrs = self.files[path].setdefault('attrs', {})
-    attrs[name] = value
-
-    ~~ this sets an attribute of a specific file by retreiving the file attributes form the dictionary and adding the specified value to the attribute~
-
-def statfs(self, path):
-    return dict(f_bsize=512, f_blocks=4096, f_bavail=2048)
-
-
-def symlink(self, target, source):
-    self.files[target] = dict(st_mode=(S_IFLNK | 0o777), st_nlink=1,
-                              st_size=len(source))
-    self.data[target] = source
-
-    ~~this creates a link between a target and a source by copying the data from the source to the target~
-
-def truncate(self, path, length, fh=None):
-    self.data[path] = self.data[path][:length]
-    self.files[path]['st_size'] = length
-
-    ~~this shortens a file by deleting all content after the specified length and sets the length of the file to be shorter~
+'''.
+    this reads the contents of a directory 
+'''
 
 def unlink(self, path):
     self.files.pop(path)
-
-    ~~this simply removes an item from the dictionary~
-
-def utimens(self, path, times=None):
-    now = time()
-    atime, mtime = times if times else (now, now)
-    self.files[path]['st_atime'] = atime
-    self.files[path]['st_mtime'] = mtime
-
-    ~~this sets the a and m time attributes of the file to the current time if the parameter times was not set ~
+'''.
+    this simply removes an item from the files dictionary but not the data dictionary so it the data is still able to be read but there is no record of it or it's attributes.
+'''
 
 def write(self, path, data, offset, fh):
     self.data[path] = self.data[path][:offset] + data
     self.files[path]['st_size'] = len(self.data[path])
     return len(data)
-
-    ~~ this appends a file by writing extra data to it, it then also updates the length of the file and returns the length of the new data~
+'''.
+    This appends a the value of the file in the data dictionary, it then also updates the length of the file in the files dictionary and returns the length of the new data.
+'''
