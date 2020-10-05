@@ -1,5 +1,8 @@
-#!/usr/bin/env python
-
+'''
+    Name:   Etienne Naude
+    UPI :   enau831
+    ID  :   768485633
+'''
 from __future__ import print_function, absolute_import, division
 
 import logging
@@ -61,52 +64,3 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     main(sys.argv[3], sys.argv[1], sys.argv[2])
 
-
-"""
-    def getattr(self, path, fh=None):
-        full_path = self._full_path(path)
-        try:
-            st = os.lstat(full_path[0])
-            val = dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                     'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
-            return val
-        except:
-            st = os.lstat(full_path[1])
-            val =  dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
-                     'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
-            return val
-
-
-
-    def _full_path(self, partial):
-        if partial.startswith("/"):
-            partial = partial[1:]
-            path = [os.path.join(self.root[0], partial),os.path.join(self.root[1], partial)]  
-            print(path)
-            return path
-
-    def readdir(self, path, fh):
-        full_path = self._full_path(path)
-
-        dirents = ['.', '..']
-        if os.path.isdir(full_path[0]):
-            dirents.extend(os.listdir(full_path[0]))
-        for r in dirents:
-            yield r
-
-        if os.path.isdir(full_path[1]):
-            dirents.extend(os.listdir(full_path[1]))
-        for r in dirents:
-            yield r
-
-    def access(self, path, mode):
-        full_path = self._full_path(path)
-        if not os.access(full_path[0], mode):
-            raise FuseOSError(errno.EACCES)
-        if not os.access(full_path[1], mode):
-            raise FuseOSError(errno.EACCES)
-    def open(self, path, flags):
-        full_path = self._full_path(path)
-        os.open(full_path[0], flags)
-        return os.open(full_path[1], flags)
-"""
