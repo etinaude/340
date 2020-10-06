@@ -91,6 +91,7 @@ class Fuse2(LoggingMixIn, Passthrough):
             dirents.extend(os.listdir(full_path))
         if os.path.isdir(full_path2):
             dirents.extend(os.listdir(full_path2))
+        dirents.extend(self.second.readdir(path, fh))
         for r in dirents:
             yield r
 
@@ -100,13 +101,39 @@ class Fuse2(LoggingMixIn, Passthrough):
 
     def getattr(self, path, fh=None):
         full_path = self._full_path(path)
-        try:
+        if os.path.exists(full_path):
             st = os.lstat(full_path)
             return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
                                                             'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
+        else:
+            return self.second.getattr(path)
+    
+    def open(self, path, flags):
+        full_path = self._full_path(path)
+        if os.path.exists(full_path):
+            return os.open(full_path, flags)
+        else: 
+            self.second.open(path, flags)
+
+    def unlink(self, path):
+        full_path = self._full_path(path)
+        if os.path.exists(full_path):
+            return os.unlink(full_path)
+        else:
+            return self.second.unlink(path)
+
+    def write(self, path, buf, offset, fh):
+        try:
+            os.lseek(fh, offset, os.SEEK_SET)
+            return os.write(fh, buf)
         except:
-            return second.getattr(full_path)
-    #    return os.open(full_path, os.O_WRONLY | os.O_CREAT, mode)
+            return self.second.write(path, buf, offset, fh)
+
+
+
+
+
+
 
 
 def main(mountpoint, root1, root2):
