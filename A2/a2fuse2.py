@@ -36,9 +36,6 @@ class FuseAlt(Memory):
 
         return self.files[path]
 
-    def readdir(self, path, fh):
-        return ['.', '..'] + [x[1:] for x in self.files if x != '/']
-
     def read(self, path, size, offset, fh):
         return self.data[path][offset:offset + size]
 
@@ -46,32 +43,19 @@ class FuseAlt(Memory):
         self.fd += 1
         return self.fd
 
-    def unlink(self, path):
-        self.files.pop(path)
-
     def create(self, path, mode):
-        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", path)
         self.files[path] = dict(st_mode=(S_IFREG | mode), st_nlink=1,
                                 st_size=0, st_ctime=time(), st_mtime=time(),
                                 st_atime=time())
+        #print("`````````````````````````````````",self.fd)
         self.fd += 1
-        print(self.files, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-        return self.fd
+        return 1
 
     def write(self, path, data, offset, fh):
-        print("****************",
-              self.data, "***" ,path, "***********************")
         self.data[path] = self.data[path][:offset] + data
         self.files[path]['st_size'] = len(self.data[path])
         return len(data)
 
-    def getxattr(self, path, name, position=0):
-        attrs = self.files[path].get('attrs', {})
-
-        try:
-            return attrs[name]
-        except KeyError:
-            return ''       # Should return ENOATTR
 
 class Fuse2(LoggingMixIn, Passthrough):
     def __init__(self, root1, root2, mnt):
