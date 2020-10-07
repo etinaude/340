@@ -1,165 +1,89 @@
-root@vultr:/home/git/340/A2# python3 a2fuse2.py source1/ source2/ mount/
-DEBUG:fuse.log-mixin:-> init / ()
-DEBUG:fuse.log-mixin:<- init None
+DEBUG:fuse.log-mixin:-> getattr /hi (None,)
+DEBUG:fuse.log-mixin:<- getattr '[Errno 2] No such file or directory'
+DEBUG:fuse:FUSE operation getattr raised a <class 'fuse.FuseOSError'>, returning errno 2.
+Traceback (most recent call last):
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 731, in _wrapper
+    return func(*args, **kwargs) or 0
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 771, in getattr
+    return self.fgetattr(path, buf, None)
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 1024, in fgetattr
+    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 1240, in __call__
+    ret = getattr(self, op)(path, *args)
+  File "a2fuse2.py", line 118, in getattr
+    return self.second.getattr(path)
+  File "a2fuse2.py", line 35, in getattr
+    raise FuseOSError(ENOENT)
+fuse.FuseOSError: [Errno 2] No such file or directory
+DEBUG:fuse.log-mixin:-> create /hi (33204,)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ /hi
+{'/': {'st_mode': 16877, 'st_ctime': 1602032035.7819042, 'st_mtime': 1602032035.7819042, 'st_atime': 1602032035.7819042, 'st_nlink': 2}, '/hi': {'st_mode': 33204, 'st_nlink': 1, 'st_size': 0, 'st_ctime': 1602032047.4193053, 'st_mtime': 1602032047.4193058, 'st_atime': 1602032047.419306}} ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DEBUG:fuse.log-mixin:<- create 1
+DEBUG:fuse.log-mixin:-> getattr /hi (1,)
+DEBUG:fuse.log-mixin:<- getattr {'st_mode': 33204, 'st_nlink': 1, 'st_size': 0, 'st_ctime': 1602032047.4193053, 'st_mtime': 1602032047.4193058, 'st_atime': 1602032047.419306}
+DEBUG:fuse.log-mixin:-> flush /hi (1,)
+DEBUG:fuse.log-mixin:<- flush 0
 DEBUG:fuse.log-mixin:-> getattr / (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601940701.1592035, 'st_ctime': 1601940700.3631947, 'st_gid': 0, 'st_mode': 16877, 'st_mtime': 1601940700.3631947, 'st_nlink': 2, 'st_size': 4096, 'st_uid': 0}
-DEBUG:fuse.log-mixin:-> access / (1,)
-DEBUG:fuse.log-mixin:<- access None
-DEBUG:fuse.log-mixin:-> getattr /newfile (None,)
-DEBUG:fuse.log-mixin:<- getattr "[Errno 2] No such file or directory: 'source1/newfile'"
-DEBUG:fuse:FUSE operation getattr raised a <class 'FileNotFoundError'>, returning errno 2.
-Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
-    return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 771, in getattr
-    return self.fgetattr(path, buf, None)
-  File "/home/git/340/A2/fuse.py", line 1024, in fgetattr
-    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
-    ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/passthrough.py", line 43, in getattr
-    st = os.lstat(full_path)
-FileNotFoundError: [Errno 2] No such file or directory: 'source1/newfile'
-DEBUG:fuse.log-mixin:-> create /newfile (33188,)
-DEBUG:fuse.log-mixin:<- create 4
-DEBUG:fuse.log-mixin:-> getattr /newfile (4,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601940731.6315465, 'st_ctime': 1601940731.6315465, 'st_gid': 0, 'st_mode': 33188, 'st_mtime': 1601940731.6315465, 'st_nlink': 1, 'st_size': 0, 'st_uid': 0}
-DEBUG:fuse.log-mixin:-> flush /newfile (4,)
-DEBUG:fuse.log-mixin:<- flush None
-DEBUG:fuse.log-mixin:-> getattr /.git (None,)
-DEBUG:fuse.log-mixin:<- getattr "[Errno 2] No such file or directory: 'source1/.git'"
-DEBUG:fuse:FUSE operation getattr raised a <class 'FileNotFoundError'>, returning errno 2.
-Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
-    return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 771, in getattr
-    return self.fgetattr(path, buf, None)
-  File "/home/git/340/A2/fuse.py", line 1024, in fgetattr
-    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
-    ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/passthrough.py", line 43, in getattr
-    st = os.lstat(full_path)
-FileNotFoundError: [Errno 2] No such file or directory: 'source1/.git'
-DEBUG:fuse.log-mixin:-> getattr /.git (None,)
-DEBUG:fuse.log-mixin:<- getattr "[Errno 2] No such file or directory: 'source1/.git'"
-DEBUG:fuse:FUSE operation getattr raised a <class 'FileNotFoundError'>, returning errno 2.
-Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
-    return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 771, in getattr
-    return self.fgetattr(path, buf, None)
-  File "/home/git/340/A2/fuse.py", line 1024, in fgetattr
-    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
-    ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/passthrough.py", line 43, in getattr
-    st = os.lstat(full_path)
-FileNotFoundError: [Errno 2] No such file or directory: 'source1/.git'
+DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601978543.744611, 'st_ctime': 1601978543.7086115, 'st_gid': 1000, 'st_mode': 16893, 'st_mtime': 1601978543.7086115, 'st_nlink': 2, 'st_size': 4096, 'st_uid': 1000}
 DEBUG:fuse.log-mixin:-> opendir / ()
 DEBUG:fuse.log-mixin:<- opendir 0
-DEBUG:fuse.log-mixin:-> getattr / (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601940732.3155544, 'st_ctime': 1601940731.6315465, 'st_gid': 0, 'st_mode': 16877, 'st_mtime': 1601940731.6315465, 'st_nlink': 2, 'st_size': 4096, 'st_uid': 0}
 DEBUG:fuse.log-mixin:-> readdir / (0,)
-DEBUG:fuse.log-mixin:<- readdir <generator object Fuse2.readdir at 0x7f7042cb3900>
-DEBUG:fuse.log-mixin:-> getattr /newfile (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601940731.6315465, 'st_ctime': 1601940731.6315465, 'st_gid': 0, 'st_mode': 33188, 'st_mtime': 1601940731.6315465, 'st_nlink': 1, 'st_size': 0, 'st_uid': 0}
-DEBUG:fuse.log-mixin:-> getattr /.gitignore (None,)
-DEBUG:fuse.log-mixin:<- getattr "[Errno 2] No such file or directory: 'source1/.gitignore'"
-DEBUG:fuse:FUSE operation getattr raised a <class 'FileNotFoundError'>, returning errno 2.
-Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
-    return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 771, in getattr
-    return self.fgetattr(path, buf, None)
-  File "/home/git/340/A2/fuse.py", line 1024, in fgetattr
-    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
-    ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/passthrough.py", line 43, in getattr
-    st = os.lstat(full_path)
-FileNotFoundError: [Errno 2] No such file or directory: 'source1/.gitignore'
-DEBUG:fuse.log-mixin:-> getattr /one (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601873452.852792, 'st_ctime': 1601873429.3247707, 'st_gid': 0, 'st_mode': 33188, 'st_mtime': 1601873429.3247707, 'st_nlink': 1, 'st_size': 31, 'st_uid': 0}
-DEBUG:fuse.log-mixin:-> getattr /two (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601873452.852792, 'st_ctime': 1601873429.3247707, 'st_gid': 0, 'st_mode': 33188, 'st_mtime': 1601873429.3247707, 'st_nlink': 1, 'st_size': 41, 'st_uid': 0}
+DEBUG:fuse.log-mixin:<- readdir <generator object Fuse2.readdir at 0x7f46719b0510>
 DEBUG:fuse.log-mixin:-> releasedir / (0,)
 DEBUG:fuse.log-mixin:<- releasedir 0
-DEBUG:fuse.log-mixin:-> getxattr /newfile ('security.capability',)
+DEBUG:fuse.log-mixin:-> getattr /two (None,)
+DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601978551.8125505, 'st_ctime': 1601978551.752551, 'st_gid': 1000, 'st_mode': 33204, 'st_mtime': 1601978551.752551, 'st_nlink': 1, 'st_size': 41, 'st_uid': 1000}
+DEBUG:fuse.log-mixin:-> getattr /one (None,)
+DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1602027513.9553053, 'st_ctime': 1602027513.8993046, 'st_gid': 1000, 'st_mode': 33204, 'st_mtime': 1602027513.8993046, 'st_nlink': 1, 'st_size': 3, 'st_uid': 1000}
+
+DEBUG:fuse.log-mixin:-> getxattr /hi ('security.capability',)
 DEBUG:fuse.log-mixin:<- getxattr '[Errno 95] Operation not supported'
 DEBUG:fuse:FUSE operation getxattr raised a <class 'fuse.FuseOSError'>, returning errno 95.
 Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 731, in _wrapper
     return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 906, in getxattr
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 906, in getxattr
     ret = self.operations('getxattr', path.decode(self.encoding),
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 1240, in __call__
     ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/fuse.py", line 1124, in getxattr
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 1124, in getxattr
     raise FuseOSError(ENOTSUP)
 fuse.FuseOSError: [Errno 95] Operation not supported
-DEBUG:fuse.log-mixin:-> write /newfile (b'newnewnew', 0, 4)
-DEBUG:fuse.log-mixin:<- write 9
-DEBUG:fuse.log-mixin:-> flush /newfile (4,)
-DEBUG:fuse.log-mixin:<- flush None
-DEBUG:fuse.log-mixin:-> release /newfile (4,)
+DEBUG:fuse.log-mixin:-> write /hi (b'hello', 0, 1)
+**************** defaultdict(<class 'bytes'>, {}) *** /hi ***********************
+DEBUG:fuse.log-mixin:<- write 5
+DEBUG:fuse.log-mixin:-> flush /hi (1,)
+DEBUG:fuse.log-mixin:<- flush 0
+DEBUG:fuse.log-mixin:-> release /hi (1,)
 DEBUG:fuse.log-mixin:<- release None
-DEBUG:fuse.log-mixin:-> getattr /.git (None,)
-DEBUG:fuse.log-mixin:<- getattr "[Errno 2] No such file or directory: 'source1/.git'"
-DEBUG:fuse:FUSE operation getattr raised a <class 'FileNotFoundError'>, returning errno 2.
+
+
+DEBUG:fuse.log-mixin:-> open /hi (32768,)
+DEBUG:fuse.log-mixin:<- open None
+ERROR:fuse:Uncaught exception from FUSE operation open, returning errno.EINVAL.
 Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 731, in _wrapper
     return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 771, in getattr
-    return self.fgetattr(path, buf, None)
-  File "/home/git/340/A2/fuse.py", line 1024, in fgetattr
-    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
-    ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/passthrough.py", line 43, in getattr
-    st = os.lstat(full_path)
-FileNotFoundError: [Errno 2] No such file or directory: 'source1/.git'
-DEBUG:fuse.log-mixin:-> getattr /.git (None,)
-DEBUG:fuse.log-mixin:<- getattr "[Errno 2] No such file or directory: 'source1/.git'"
-DEBUG:fuse:FUSE operation getattr raised a <class 'FileNotFoundError'>, returning errno 2.
-Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
-    return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 771, in getattr
-    return self.fgetattr(path, buf, None)
-  File "/home/git/340/A2/fuse.py", line 1024, in fgetattr
-    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
-    ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/passthrough.py", line 43, in getattr
-    st = os.lstat(full_path)
-FileNotFoundError: [Errno 2] No such file or directory: 'source1/.git'
+  File "/home/etinaude/Documents/git/340/A2/fuse.py", line 831, in open
+    fi.fh = self.operations('open', path.decode(self.encoding),
+TypeError: an integer is required (got type NoneType)
+DEBUG:fuse.log-mixin:-> getattr / (None,)
+DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601978543.744611, 'st_ctime': 1601978543.7086115, 'st_gid': 1000, 'st_mode': 16893, 'st_mtime': 1601978543.7086115, 'st_nlink': 2, 'st_size': 4096, 'st_uid': 1000}
 DEBUG:fuse.log-mixin:-> opendir / ()
 DEBUG:fuse.log-mixin:<- opendir 0
-DEBUG:fuse.log-mixin:-> getattr / (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601940732.3155544, 'st_ctime': 1601940731.6315465, 'st_gid': 0, 'st_mode': 16877, 'st_mtime': 1601940731.6315465, 'st_nlink': 2, 'st_size': 4096, 'st_uid': 0}
 DEBUG:fuse.log-mixin:-> readdir / (0,)
-DEBUG:fuse.log-mixin:<- readdir <generator object Fuse2.readdir at 0x7f7042cb3900>
-DEBUG:fuse.log-mixin:-> getattr /newfile (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601940731.6315465, 'st_ctime': 1601940736.1435974, 'st_gid': 0, 'st_mode': 33188, 'st_mtime': 1601940736.1435974, 'st_nlink': 1, 'st_size': 9, 'st_uid': 0}
-DEBUG:fuse.log-mixin:-> getattr /.gitignore (None,)
-DEBUG:fuse.log-mixin:<- getattr "[Errno 2] No such file or directory: 'source1/.gitignore'"
-DEBUG:fuse:FUSE operation getattr raised a <class 'FileNotFoundError'>, returning errno 2.
-Traceback (most recent call last):
-  File "/home/git/340/A2/fuse.py", line 731, in _wrapper
-    return func(*args, **kwargs) or 0
-  File "/home/git/340/A2/fuse.py", line 771, in getattr
-    return self.fgetattr(path, buf, None)
-  File "/home/git/340/A2/fuse.py", line 1024, in fgetattr
-    attrs = self.operations('getattr', self._decode_optional_path(path), fh)
-  File "/home/git/340/A2/fuse.py", line 1240, in __call__
-    ret = getattr(self, op)(path, *args)
-  File "/home/git/340/A2/passthrough.py", line 43, in getattr
-    st = os.lstat(full_path)
-FileNotFoundError: [Errno 2] No such file or directory: 'source1/.gitignore'
+DEBUG:fuse.log-mixin:<- readdir <generator object Fuse2.readdir at 0x7f46719b0510>
+DEBUG:fuse.log-mixin:-> releasedir / (0,)
+DEBUG:fuse.log-mixin:<- releasedir 0
 DEBUG:fuse.log-mixin:-> getattr /one (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601873452.852792, 'st_ctime': 1601873429.3247707, 'st_gid': 0, 'st_mode': 33188, 'st_mtime': 1601873429.3247707, 'st_nlink': 1, 'st_size': 31, 'st_uid': 0}
+DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1602027513.9553053, 'st_ctime': 1602027513.8993046, 'st_gid': 1000, 'st_mode': 33204, 'st_mtime': 1602027513.8993046, 'st_nlink': 1, 'st_size': 3, 'st_uid': 1000}
 DEBUG:fuse.log-mixin:-> getattr /two (None,)
-DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601873452.852792, 'st_ctime': 1601873429.3247707, 'st_gid': 0, 'st_mode': 33188, 'st_mtime': 1601873429.3247707, 'st_nlink': 1, 'st_size': 41, 'st_uid': 0}
+DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601978551.8125505, 'st_ctime': 1601978551.752551, 'st_gid': 1000, 'st_mode': 33204, 'st_mtime': 1601978551.752551, 'st_nlink': 1, 'st_size': 41, 'st_uid': 1000}
+DEBUG:fuse.log-mixin:-> getattr / (None,)
+DEBUG:fuse.log-mixin:<- getattr {'st_atime': 1601978543.744611, 'st_ctime': 1601978543.7086115, 'st_gid': 1000, 'st_mode': 16893, 'st_mtime': 1601978543.7086115, 'st_nlink': 2, 'st_size': 4096, 'st_uid': 1000}
+DEBUG:fuse.log-mixin:-> opendir / ()
+DEBUG:fuse.log-mixin:<- opendir 0
+DEBUG:fuse.log-mixin:-> readdir / (0,)
+DEBUG:fuse.log-mixin:<- readdir <generator object Fuse2.readdir at 0x7f46719b0510>
 DEBUG:fuse.log-mixin:-> releasedir / (0,)
 DEBUG:fuse.log-mixin:<- releasedir 0

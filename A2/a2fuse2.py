@@ -24,7 +24,7 @@ from memory import Memory
 class FuseAlt(Memory):
     def __init__(self):
         self.files = {}
-        self.data = {}
+        self.data = defaultdict(bytes)
         self.fd = 0
         now = time()
         self.files['/'] = dict(st_mode=(S_IFDIR | 0o755), st_ctime=now,
@@ -50,19 +50,28 @@ class FuseAlt(Memory):
         self.files.pop(path)
 
     def create(self, path, mode):
+        print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~", path)
         self.files[path] = dict(st_mode=(S_IFREG | mode), st_nlink=1,
                                 st_size=0, st_ctime=time(), st_mtime=time(),
                                 st_atime=time())
         self.fd += 1
+        print(self.files, "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         return self.fd
 
     def write(self, path, data, offset, fh):
         print("****************",
-              data, "***********************")
+              self.data, "***" ,path, "***********************")
         self.data[path] = self.data[path][:offset] + data
         self.files[path]['st_size'] = len(self.data[path])
         return len(data)
 
+    def getxattr(self, path, name, position=0):
+        attrs = self.files[path].get('attrs', {})
+
+        try:
+            return attrs[name]
+        except KeyError:
+            return ''       # Should return ENOATTR
 
 class Fuse2(LoggingMixIn, Passthrough):
     def __init__(self, root1, root2, mnt):
@@ -113,7 +122,7 @@ class Fuse2(LoggingMixIn, Passthrough):
         if os.path.exists(full_path):
             return os.open(full_path, flags)
         else: 
-            self.second.open(path, flags)
+            return self.second.open(path, flags)
 
     def unlink(self, path):
         full_path = self._full_path(path)
@@ -123,16 +132,27 @@ class Fuse2(LoggingMixIn, Passthrough):
             return self.second.unlink(path)
 
     def write(self, path, buf, offset, fh):
-        try:
+        full_path = self._full_path(path)
+        if os.path.exists(full_path):
             os.lseek(fh, offset, os.SEEK_SET)
             return os.write(fh, buf)
-        except:
+        else:
             return self.second.write(path, buf, offset, fh)
 
+    def read(self, path, length, offset, fh):
+        full_path = self._full_path(path)
+        if os.path.exists(full_path):
+            os.lseek(fh, offset, os.SEEK_SET)
+            return os.read(fh, length)
+        else:
+            return self.second.read(path, length, offset, fh)
 
-
-
-
+    def flush(self, path, fh):
+        full_path = self._full_path(path)
+        if os.path.exists(full_path):
+            return os.fsync(fh)
+        else:
+            return self.second.flush(path, fh)
 
 
 
