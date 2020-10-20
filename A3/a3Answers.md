@@ -89,17 +89,19 @@ append
 
 ### 1k
 
-## Question 2 7
+If the inode was not already in memory it would need to be loaded. If blocks outside the inode were already in memory they wouldn't need to be loaded so this needs to be specified. Essentially each assumption shows what will need to be loaded or not, and without the assumptions there could be a range of different answers or not enough information to form a full answer.
 
-Intel core i5-10120u
+## Question 2 - Done
 
-Nearly all 64bit processors are backwards compatible with 32bit addresses. This is because many programs don't need to use the whole 32-bit address space, let alone th 64-bit one.
+**Intel core i5-10210u**
+
+Nearly all 64bit processors are backwards compatible with 32bit addresses. This is because many programs don't need to use the whole 32-bit address space, let alone the 64-bit one.
 
 They need to be reprogrammed to take advantage of the full 64-bit address space this is especially relevant for operating systems, which needs to allocate virtual to real addresses.
 
 ## Question 3 3
 
-16GB
+**16GB**
 
 8KB
 1MB
@@ -115,14 +117,18 @@ bit map
 
 ## Question 4 6
 
-4,398,046,511,104 bytes
+**4,398,046,511,104 bytes**
+
+4398.046511104 GB
 
 2^32 \* 1024
 not realistic at all. Most programmes wont need it.
 
 ## Question 5 6
 
-5000151 \* 0.0001 + 151 \* .99
+**649.51ns**
+
+(5000151 \* 0.0001) + (151 \* .99)
 
 649.5051ns
 
