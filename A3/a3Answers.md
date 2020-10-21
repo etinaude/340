@@ -11,6 +11,7 @@
 16 blocks
 4 KiB blocks size
 4 Byte block number
+4096/4 = 1024
 4 \* 8 = 32 bit
 
 ### 1a
@@ -132,7 +133,19 @@ not realistic at all. Most programmes wont need it.
 
 649.5051ns
 
-## Question 6 0
+## Question 6 3
+
+64 bit addresses
+4MB pages
+
+64 bytes
+
+2^64/(8\*2^22) pages = 549,755,813,888 pages
+2^(22-6) = 65,536 entries per page
+65,536 = single level
+4,294,967,296 = 2 level
+549,755,813,888 = goal
+281,474,976,710,656 = 3 level
 
 <!--
 ## Question 7 - DONE
