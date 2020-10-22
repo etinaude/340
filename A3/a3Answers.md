@@ -6,76 +6,91 @@
 
 `Name: Etienne Naude`
 
-## Question 1 2
+## Question 1
 
 16 blocks
 4 KiB blocks size
-4 Byte block number
-4096/4 = 1024
+4 Byte block number --> 4\*8 --> 32bit number 2^(32) --> 4294967296 pages
+4096/4 = 1024 numbers per block
 4 \* 8 = 32 bit
 
+65,536 page table entries
+
+size =
+
+2048
+268,435,456
+2,129,920
+4,259,840
+
+4,194,304
+
+4,259,840
+
+4,294,967,296
+8,290,304
+
 ### 1a
+
+**65,536 bytes**
 
 16 \* 4096 =
 65,536 bytes
 
 ### 1b
 
-262,144
+**4,259,840 bytes**
 
-(16 \* 4096)\*2 =
-131,072 bytes
+65,536 + 1024\*4096=
+4,259,840
 
 ### 1c
 
-(16 \* 4096)\*2+
-(16 \* 4096)^2 =
-4,295,098,368 bytes
+**4,299,227,136 bytes**
+
+65536 +
+1024\*4096+
+(1024)^2\*4096=
+4,299,227,136
 
 ### 1d
 
-17,592,186,044,416 bytes
+**4,402,345,738,240 bytes**
 
-(16 \* 4096)\*2+
-(16 \* 4096)^2+
-(16 \* 4096)^3 =
-281,479,271,809,024 bytes
-
-(2^32)\*4096 =
-17,592,186,044,416 bytes
-
-17,592,186,044,416 bytes < 281,479,271,809,024 bytes
-
-since the block number restricts the size most thats the limit
+65536 +
+1024\*4096+
+(1024^2)\*4096+
+(1024^3) \*4096=
+4,402,345,738,240 bytes
 
 ### 1e
 
-4
+**5**
 
-4 = 18,447,025,552,981,360,000 bytes
-3 = 281,479,271,809,024 bytes
-aim = 1,152,921,504,606,846,976 bytes
+aim : 1152921504606846976
+max3: 4402345738240
+max4: 4508001973108736
+max5: 4616194020400496640
+
+aim is > 4 but aim < 5 so the number of levels needed is 5
 
 ### 1f
 
 2
 
-first block ends at 4096
-
-4050+100 goes over 4096 the next block needs to be accessed as well.
+direct twice
 
 ### 1g
 
-2
+5
 
-4,259,820 + 100 extends past the end of the block (block ends at 4,259,840)
+single indirect + double indirect
 
 ### 1h
 
-2
+6
 
-4,263,900 + 100 extends past 4,263,936 therefor uses 2
-4,263,936
+double indirect twice
 
 ### 1i
 
@@ -92,7 +107,7 @@ append
 
 If the inode was not already in memory it would need to be loaded. If blocks outside the inode were already in memory they wouldn't need to be loaded so this needs to be specified. Essentially each assumption shows what will need to be loaded or not, and without the assumptions there could be a range of different answers or not enough information to form a full answer.
 
-## Question 2 - Done
+## Question 2
 
 **Intel core i5-10210u**
 
@@ -116,7 +131,7 @@ bit map
 
 32
 
-## Question 4 6
+## Question 4
 
 **4,398,046,511,104 bytes**
 
@@ -133,9 +148,12 @@ not realistic at all. Most programmes wont need it.
 
 649.5051ns
 
-## Question 6 8
+## Question 6
 
-3 Levels
+**3 Levels**
+**8,388,609 total pages.**
+
+There are 3 levels, first level has 1 page, next level has 65536 pages and the last level has the rest needed to point to all the data.
 
 64 bit addresses
 2^22 byte pages
@@ -154,10 +172,13 @@ total levels is 3
 
 2^(39-16) = 8388608
 
+1
+--> 65536 --> data
+--> --> --> 8323072 --> data
+
 8,388,609 total pages.
 
-<!--
-## Question 7 - DONE
+## Question 7
 
 40 seconds
 
@@ -193,7 +214,7 @@ Double the memory, half the errors.
 
 This is a significant reduction
 
-## Question 8 - **DONE**
+## Question 8
 
 ### 8a - FIFO
 
@@ -238,12 +259,3 @@ This is a significant reduction
 | **0** | `=`   | **2** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | **6** | **7** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   |
 | **0** | `=`   | `=`   | **3** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | **2** | **3** | `=`   | `=`   | `=`   |
 | **0** | `=`   | `=`   | `=`   | **4** | `=`   | `=`   | `=`   | `=`   | **1** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   |
-
--->
-
-## QUESTIONS
-
-5: time if it works
-add if it doesnt?
-
-6: where to even begin
