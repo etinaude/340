@@ -6,93 +6,101 @@
 
 `Name: Etienne Naude`
 
-## Question 1 2
+## Question 1
 
 16 blocks
 4 KiB blocks size
 4 Byte block number
-4096/4 = 1024
-4 \* 8 = 32 bit
 
 ### 1a
+
+**65,536 bytes**
 
 16 \* 4096 =
 65,536 bytes
 
 ### 1b
 
-262,144
+**4,259,840 bytes**
 
-(16 \* 4096)\*2 =
-131,072 bytes
+65,536 + 1024\*4096=
+4,259,840
 
 ### 1c
 
-(16 \* 4096)\*2+
-(16 \* 4096)^2 =
-4,295,098,368 bytes
+**4,299,227,136 bytes**
+
+65536 +
+1024\*4096+
+(1024)^2\*4096=
+4,299,227,136
 
 ### 1d
 
-17,592,186,044,416 bytes
+**4,402,345,738,240 bytes**
 
-(16 \* 4096)\*2+
-(16 \* 4096)^2+
-(16 \* 4096)^3 =
-281,479,271,809,024 bytes
-
-(2^32)\*4096 =
-17,592,186,044,416 bytes
-
-17,592,186,044,416 bytes < 281,479,271,809,024 bytes
-
-since the block number restricts the size most thats the limit
+65536 +
+1024\*4096+
+(1024^2)\*4096+
+(1024^3) \*4096=
+4,402,345,738,240 bytes
 
 ### 1e
 
-4
+**5**
 
-4 = 18,447,025,552,981,360,000 bytes
-3 = 281,479,271,809,024 bytes
-aim = 1,152,921,504,606,846,976 bytes
+aim : 1152921504606846976
+max3: 4402345738240
+max4: 4508001973108736
+max5: 4616194020400496640
+
+aim is > 4 but aim < 5 so the number of levels needed is 5
 
 ### 1f
 
-2
+**2**
 
-first block ends at 4096
-
-4050+100 goes over 4096 the next block needs to be accessed as well.
+direct twice
 
 ### 1g
 
-2
+**5**
 
-4,259,820 + 100 extends past the end of the block (block ends at 4,259,840)
+single indirect + double indirect
 
 ### 1h
 
-2
+**6**
 
-4,263,900 + 100 extends past 4,263,936 therefor uses 2
-4,263,936
+double indirect twice
 
 ### 1i
 
-assume overwrites everything
+**10**
 
-1221
-ends at 9,259,820
+overwrites everything
+
+5 for reading the data
+then the blocks have been loaded into memory
+then change the blocks in memory, change the inode
+and write blocks to the disk
+so another 5
 
 ### 1j
 
-append
+**14**
+
+Assuming this appends data as the specs doesnt day "This overwrites data."
+
+2 to first block then check the file size meta data
+6 read
+6 write
 
 ### 1k
 
-If the inode was not already in memory it would need to be loaded. If blocks outside the inode were already in memory they wouldn't need to be loaded so this needs to be specified. Essentially each assumption shows what will need to be loaded or not, and without the assumptions there could be a range of different answers or not enough information to form a full answer.
+These assumptions change how many accesses will be needed, for example if the inode were not loaded into memory they it would have to be found and read before anything else or if the file access times needed to be written they would increase the number of accesses.
 
-## Question 2 - Done
+## Question 2
 
 **Intel core i5-10210u**
 
@@ -100,32 +108,35 @@ Nearly all 64bit processors are backwards compatible with 32bit addresses. This 
 
 They need to be reprogrammed to take advantage of the full 64-bit address space this is especially relevant for operating systems, which needs to allocate virtual to real addresses.
 
-## Question 3 3
+## Question 3
 
-**16GB**
-
+16GB
 8KB
 1MB
 
-\_ \_ 1MB\_ \_ ... 1MB ...
+16GB/8KB= 2,000,000 total frames
 
 bit map
-16 000 chunks
-(16GB/8KB)/8=
-250,000 byte
+2,000,000/8 = 250,000 bytes (one bit per frame)
 
-32
+linked list
+16GB/1MB = 16,000 chunks
+16,000\*32 = 512,000 bits = 64,000 bytes
 
-## Question 4 6
+The bitmap would normally be in kernel memory so for that approach all of it. But for the linked list, only the start would be in kernel memory
 
-**4,398,046,511,104 bytes**
+the extents version would use less space than the bitmap but slightly more than the linked list method
 
-4398.046511104 GB
+## Question 4
+
+**549,755,813,888 bytes**
+
+4398.046511104 Gbits = 549,755,813,888 bytes
 
 2^32 \* 1024
 not realistic at all. Most programmes wont need it.
 
-## Question 5 6
+## Question 5
 
 **649.51ns**
 
@@ -133,26 +144,39 @@ not realistic at all. Most programmes wont need it.
 
 649.5051ns
 
-## Question 6 3
+## Question 6
+
+**3 Levels**
+**8,388,609 total pages.**
+
+There are 3 levels, first level has 1 page, next level has 65536 pages and the last level has the rest needed to point to all the data.
 
 64 bit addresses
-4MB pages
+2^22 byte pages
+2^6 byte of entry
 
-64 bytes
+2^(22-6) = 65536 entries per page table = 16 bits
 
-2^64/(8\*2^22) pages = 549,755,813,888 pages
-2^(22-6) = 65,536 entries per page
-65,536 = single level
-4,294,967,296 = 2 level
-549,755,813,888 = goal
-281,474,976,710,656 = 3 level
+64-22+3 = 39 bits to encode a page
 
-<!--
-## Question 7 - DONE
+39//16 = 3
 
-40 seconds
+total levels is 3
 
-60
+1+65,536+
+65,536
+
+2^(39-16) = 8388608
+
+1
+--> 65536 --> data
+--> --> --> 8323072 --> data
+
+8,388,609 total pages.
+
+## Question 7
+
+**40 seconds**
 
 Time per fault \* faults == (4.0e+10)ns == (40s)
 
@@ -184,11 +208,11 @@ Double the memory, half the errors.
 
 This is a significant reduction
 
-## Question 8 - **DONE**
+## Question 8
 
 ### 8a - FIFO
 
-12 faults
+**12 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -199,7 +223,7 @@ This is a significant reduction
 
 ### 8b - LRU
 
-11 faults
+**11 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -210,7 +234,7 @@ This is a significant reduction
 
 ### 8c - LFU
 
-11 faults
+**11 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -221,7 +245,7 @@ This is a significant reduction
 
 ### 8d - Optimal
 
-10 faults
+**10 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -229,12 +253,3 @@ This is a significant reduction
 | **0** | `=`   | **2** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | **6** | **7** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   |
 | **0** | `=`   | `=`   | **3** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | **2** | **3** | `=`   | `=`   | `=`   |
 | **0** | `=`   | `=`   | `=`   | **4** | `=`   | `=`   | `=`   | `=`   | **1** | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   | `=`   |
-
--->
-
-## QUESTIONS
-
-5: time if it works
-add if it doesnt?
-
-6: where to even begin
