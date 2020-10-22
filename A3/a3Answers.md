@@ -125,7 +125,7 @@ bit map
 2^32 \* 1024
 not realistic at all. Most programmes wont need it.
 
-## Question 5 6
+## Question 5
 
 **649.51ns**
 
@@ -133,19 +133,28 @@ not realistic at all. Most programmes wont need it.
 
 649.5051ns
 
-## Question 6 3
+## Question 6 8
+
+3 Levels
 
 64 bit addresses
-4MB pages
+2^22 byte pages
+2^6 byte of entry
 
-64 bytes
+2^(22-6) = 65536 entries per page table = 16 bits
 
-2^64/(8\*2^22) pages = 549,755,813,888 pages
-2^(22-6) = 65,536 entries per page
-65,536 = single level
-4,294,967,296 = 2 level
-549,755,813,888 = goal
-281,474,976,710,656 = 3 level
+64-22+3 = 39 bits to encode a page
+
+39//16 = 3
+
+total levels is 3
+
+1+65,536+
+65,536
+
+2^(39-16) = 8388608
+
+8,388,609 total pages.
 
 <!--
 ## Question 7 - DONE
