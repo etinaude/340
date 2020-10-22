@@ -10,25 +10,7 @@
 
 16 blocks
 4 KiB blocks size
-4 Byte block number --> 4\*8 --> 32bit number 2^(32) --> 4294967296 pages
-4096/4 = 1024 numbers per block
-4 \* 8 = 32 bit
-
-65,536 page table entries
-
-size =
-
-2048
-268,435,456
-2,129,920
-4,259,840
-
-4,194,304
-
-4,259,840
-
-4,294,967,296
-8,290,304
+4 Byte block number
 
 ### 1a
 
@@ -76,36 +58,47 @@ aim is > 4 but aim < 5 so the number of levels needed is 5
 
 ### 1f
 
-2
+**2**
 
 direct twice
 
 ### 1g
 
-5
+**5**
 
 single indirect + double indirect
 
 ### 1h
 
-6
+**6**
 
 double indirect twice
 
 ### 1i
 
-assume overwrites everything
+**10**
 
-1221
-ends at 9,259,820
+overwrites everything
+
+5 for reading the data
+then the blocks have been loaded into memory
+then change the blocks in memory, change the inode
+and write blocks to the disk
+so another 5
 
 ### 1j
 
-append
+**14**
+
+Assuming this appends data as the specs doesnt day "This overwrites data."
+
+2 to first block then check the file size meta data
+6 read
+6 write
 
 ### 1k
 
-If the inode was not already in memory it would need to be loaded. If blocks outside the inode were already in memory they wouldn't need to be loaded so this needs to be specified. Essentially each assumption shows what will need to be loaded or not, and without the assumptions there could be a range of different answers or not enough information to form a full answer.
+These assumptions change how many accesses will be needed, for example if the inode were not loaded into memory they it would have to be found and read before anything else or if the file access times needed to be written they would increase the number of accesses.
 
 ## Question 2
 
@@ -115,27 +108,30 @@ Nearly all 64bit processors are backwards compatible with 32bit addresses. This 
 
 They need to be reprogrammed to take advantage of the full 64-bit address space this is especially relevant for operating systems, which needs to allocate virtual to real addresses.
 
-## Question 3 3
+## Question 3
 
-**16GB**
-
+16GB
 8KB
 1MB
 
-\_ \_ 1MB\_ \_ ... 1MB ...
+16GB/8KB= 2,000,000 total frames
 
 bit map
-16 000 chunks
-(16GB/8KB)/8=
-250,000 byte
+2,000,000/8 = 250,000 bytes (one bit per frame)
 
-32
+linked list
+16GB/1MB = 16,000 chunks
+16,000\*32 = 512,000 bits = 64,000 bytes
+
+The bitmap would normally be in kernel memory so for that approach all of it. But for the linked list, only the start would be in kernel memory
+
+the extents version would use less space than the bitmap but slightly more than the linked list method
 
 ## Question 4
 
-**4,398,046,511,104 bytes**
+**549,755,813,888 bytes**
 
-4398.046511104 GB
+4398.046511104 Gbits = 549,755,813,888 bytes
 
 2^32 \* 1024
 not realistic at all. Most programmes wont need it.
@@ -180,9 +176,7 @@ total levels is 3
 
 ## Question 7
 
-40 seconds
-
-60
+**40 seconds**
 
 Time per fault \* faults == (4.0e+10)ns == (40s)
 
@@ -218,7 +212,7 @@ This is a significant reduction
 
 ### 8a - FIFO
 
-12 faults
+**12 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -229,7 +223,7 @@ This is a significant reduction
 
 ### 8b - LRU
 
-11 faults
+**11 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -240,7 +234,7 @@ This is a significant reduction
 
 ### 8c - LFU
 
-11 faults
+**11 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
@@ -251,7 +245,7 @@ This is a significant reduction
 
 ### 8d - Optimal
 
-10 faults
+**10 faults**
 
 |       | **1** | **2** | **3** | **4** | **5** | **4** | **3** | **2** | **1** | **6** | **7** | **1** | **2** | **3** | **7** | **5** | **1** |
 | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- | ----- |
