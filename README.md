@@ -2,7 +2,7 @@
 
 ## A1:
 
-C
+C: quick sort
 
 ## A2:
 
